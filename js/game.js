@@ -1,4 +1,3 @@
-// set phaser screen size
 let gameScreen = new Phaser.Scene("Game");
 
 gameScreen.preload = function () {
@@ -17,6 +16,7 @@ gameScreen.create = function () {
   //work with apple
   this.apple = this.physics.add.sprite(150, 100, "apple");
   this.apple.setMaxVelocity(0, 400);
+
   //Add score text
   this.score = 0;
   this.scoreText = this.add.text(10, 10, "Score: 0", {
@@ -24,10 +24,16 @@ gameScreen.create = function () {
     fill: "#000",
     align: "center",
   });
+
+  // Enable touch input
+  this.input.addPointer(1);
 };
 
 gameScreen.update = function () {
-  this.basket.x = this.input.mousePointer.x;
+  let pointer = this.input.activePointer;
+
+  // Update basket position based on mouse or touch input
+  this.basket.x = pointer.x;
   if (this.basket.x < 50) {
     this.basket.x = 50;
   }
@@ -38,22 +44,17 @@ gameScreen.update = function () {
   if (this.apple.y > 450) {
     this.apple.y = 100;
     this.apple.x = 400;
-    // this.apple.setVelocityY(0);
   }
 
-  //   catch the apple
+  // Catch the apple
   if (this.physics.overlap(this.basket, this.apple)) {
     this.apple.y = 100;
-    //create a random integer that is between 50 and 450
     const min = 50;
     const max = 450;
     const randomInteger = Math.floor(Math.random() * (max - min + 1)) + min;
-
     this.apple.x = randomInteger;
-  }
 
-  //   update score apple catch
-  if (this.physics.overlap(this.basket, this.apple)) {
+    // Update score
     this.score += 1;
     this.scoreText.setText("Score: " + this.score);
   }
